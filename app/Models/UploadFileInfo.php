@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+use Illuminate\Support\Facades\Storage;
+
 class UploadFileInfo extends Model
 {
     use HasFactory;
@@ -23,6 +25,10 @@ class UploadFileInfo extends Model
         'updated_at'
     ];
 
+    protected $appends = [
+        'img'
+    ];
+
     public static function SaveInfo($name, $file_size, $ext, $hash)
     {
         $return = new UploadFileInfo;
@@ -31,6 +37,25 @@ class UploadFileInfo extends Model
         $return->file_ext = $ext;
         $return->hash = $hash;
         $return->save();
+        return $return;
+    }
+
+
+
+    public function getImgAttribute()
+    {
+        if (stripos($this->original_file_name, 'Jpeg') !== false) {
+            $return = '<img src="' . Storage::url('uploads/' . $this->original_file_name) . '" class="card-img-top" alt="...">';
+        }else $return = null;
+        return $return;
+    }
+
+    public function getOriginalFileNameAttribute($value)
+    {
+        if (stripos( $value, 'Pdf') != false) {
+            $return = '<a href="' . Storage::url('uploads/' . $value) . '" target="_blank">' . $value . '</a>';
+        }else $return =$value;
+
         return $return;
     }
 }

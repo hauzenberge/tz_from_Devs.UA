@@ -19,15 +19,17 @@ class UploadFilesController extends Controller
         if (($size / 102400) < 5) {
             if (stripos($name, 'Jpeg') !== false) {
                 $ext = 'Jpeg';
+                $request->file('file')->storeAs('public/uploads', $request->file('file')->getClientOriginalName());
                 $return = UploadFileinfo::SaveInfo($name, $size, $ext, $hashName)->hash;
             } elseif (stripos($name, 'Pdf')  !== false) {
                 $ext = 'Pdf';
+                $request->file('file')->storeAs('public/uploads', $request->file('file')->getClientOriginalName());
                 $return = "<strong>File was uploaded successfully</strong><br>";
-                $return .='ID: '. UploadFileinfo::SaveInfo($name, $size, $ext, $hashName)->hash;
+                $return .= 'ID: ' . UploadFileinfo::SaveInfo($name, $size, $ext, $hashName)->hash;
             } else $return = collect([
                 'error_description' => 'We support .pdf,.jpeg formats '
             ]);
-        }else $return = collect([
+        } else $return = collect([
             'error_description' => 'The file size has exceeded 5MB'
         ]);
 
